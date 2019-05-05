@@ -18,12 +18,18 @@ var (
 
 	once      sync.Once
 	bqClient  *bq.Client
-	companies []string
+	companies []*Company
 )
 
 // PubSubMessage is the payload of a Pub/Sub event
 type PubSubMessage struct {
 	Data []byte `json:"data"`
+}
+
+// Company represents externalize company object
+type Company struct {
+	Symbol  string `json:"symbol"`
+	Aliases string `json:"aliases"`
 }
 
 // GetStockPrices processes pubsub topic events
@@ -49,7 +55,7 @@ func GetStockPrices(ctx context.Context, m PubSubMessage) error {
 	quotes := make([]*Quote, 0)
 	for _, co := range companies {
 
-		quote, err := getStockPrice(co)
+		quote, err := getStockPrice(co.Symbol)
 		if err != nil {
 			logger.Printf("Error pricing symbol: %v", err)
 		}
@@ -75,11 +81,11 @@ func saveQuotes(ctx context.Context, quotes []*Quote) error {
 
 }
 
-func getCompanies(ctx context.Context) (symbols []string, err error) {
+func getCompanies(ctx context.Context) (cos []*Company, err error) {
 
 	logger.Println("Getting companies...")
 
-	qSQL := fmt.Sprintf("SELECT symbol FROM %s.company", bqDataSet)
+	qSQL := fmt.Sprintf("SELECT symbol, aliases FROM %s.company", bqDataSet)
 	q := bqClient.Query(qSQL)
 	it, err := q.Read(ctx)
 	if err != nil {
@@ -87,10 +93,10 @@ func getCompanies(ctx context.Context) (symbols []string, err error) {
 		return nil, err
 	}
 
-	list := make([]string, 0)
+	list := make([]*Company, 0)
 
 	for {
-		var c string
+		var c Company
 		err := it.Next(&c)
 		if err == iterator.Done {
 			break
@@ -99,7 +105,7 @@ func getCompanies(ctx context.Context) (symbols []string, err error) {
 			logger.Printf("Error looping through BQ values: %v", err)
 			return nil, err
 		}
-		list = append(list, c)
+		list = append(list, &c)
 	}
 
 	logger.Printf("Found %d companies", len(list))

@@ -11,5 +11,6 @@ gcloud functions deploy stocker-price \
 
 gcloud beta scheduler jobs create pubsub stocker-price-scheduler \
   --schedule "*/30 * * * *" \
-  --topic stocker-schedule
+  --topic stocker-schedule \
+  --message-body "refresh"
 
