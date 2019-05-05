@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Deleting price function..."
+gcloud functions delete stocker-price
+
+echo "Deleting source topics..."
+gcloud pubsub topics delete stocker-schedule
+
+echo "Deleting bigquery content table..."
+bq rm stocker.price

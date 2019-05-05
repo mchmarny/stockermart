@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Creating pubsub topic..."
+gcloud beta pubsub topics create stocker-schedule
+
+echo "Creating bigquery price table..."
+bq query --use_legacy_sql=false "
+  CREATE OR REPLACE TABLE stocker.price (
+    symbol STRING NOT NULL,
+    currentPrice FLOAT64 NOT NULL,
+    closingPrice FLOAT64 NOT NULL,
+    closingDate STRING NOT NULL,
+    quotedAt TIMESTAMP NOT NULL
+)"

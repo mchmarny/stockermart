@@ -1,0 +1,15 @@
+#!/bin/bash
+
+gcloud functions deploy stocker-price \
+  --entry-point GetStockPrices \
+  --set-env-vars "PID=${GCP_PROJECT},STOCK_PRICER_API_KEY=${STOCK_PRICER_API_KEY}" \
+  --memory 512MB \
+  --region us-central1 \
+  --runtime go112 \
+  --trigger-topic stocker-schedule \
+  --timeout=540s
+
+gcloud beta scheduler jobs create pubsub stocker-price-scheduler \
+  --schedule "*/30 * * * *" \
+  --topic stocker-schedule
+
