@@ -13,7 +13,6 @@ var (
 	apiKey = mustEnvVar("STOCK_PRICER_API_KEY", "")
 )
 
-
 type response struct {
 	Quote responseContent `json:"Global Quote"`
 }
@@ -28,7 +27,7 @@ type responseContent struct {
 // Quote represents externalize stock quote
 type Quote struct {
 	Symbol       string    `json:"symbol"`
-	CurrentPrice float64   `json:"currentPrice"`
+	Price        float64   `json:"price"`
 	ClosingPrice float64   `json:"closingPrice"`
 	ClosingDate  string    `json:"closingDate"`
 	QuotedAt     time.Time `json:"quotedAt"`
@@ -43,7 +42,7 @@ func getStockPrice(symbol string) (quote *Quote, err error) {
 
 	q := &Quote{
 		Symbol:       d.Symbol,
-		CurrentPrice: d.CurrentPrice,
+		Price:        d.CurrentPrice,
 		ClosingPrice: d.ClosedPrice,
 		ClosingDate:  d.ClosedDate,
 		QuotedAt:     time.Now(),
