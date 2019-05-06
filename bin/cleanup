@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Deleting price function..."
-gcloud functions delete stocker-price
+gcloud functions delete stocker-price --region us-central1
 
 echo "Deleting source topics..."
 gcloud pubsub topics delete stocker-schedule
