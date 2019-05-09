@@ -1,10 +1,10 @@
 # stockermart
 
-Stock market price downloader
+`Cloud Functions` Stock market price downloader to `BigQuery` using `Cloud Scheduler` and `Cloud PubSub`.
 
 ## Setup
 
-Create pubsub topic
+Create PubSub topic
 
 ```shell
 gcloud beta pubsub topics create stocker-schedule
